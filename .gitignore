@@ -1,4 +1,3 @@
 /terraform-infra/.terraform
 /terraform-infra/.terraform.lock.hcl
 /terraform-infra/.env
-/terraform-infra/terraform.tfvars

@@ -1,10 +1,9 @@
-resource "aws_instance" "sample_ec2" {
-  ami           = "ami-02b49a24cfb95941c"
-  instance_type = "t2.micro"
-  subnet_id     = ""
-  key_name      = ""
 
-  tags = {
-    Name = ""
-  }
+module "networking" {
+  source               = "./modules/networking"
+  vpc_cidr             = var.vpc_cidr
+  vpc_name             = var.vpc_name
+  cidr_public_subnet   = var.cidr_public_subnet
+  eu_availability_zone = var.eu_availability_zone
+  cidr_private_subnet  = var.cidr_private_subnet
 }
