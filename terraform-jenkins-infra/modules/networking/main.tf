@@ -40,6 +40,41 @@ resource "aws_subnet" "private_subnets" {
 resource "aws_internet_gateway" "public_internet_gateway" {
   vpc_id = aws_vpc.jenkins_vpc_eu_west_1.id
   tags = {
-    Name = "dev-proj-1-igw"
+    Name = "igw"
   }
+}
+
+# Public Route Table
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.jenkins_vpc_eu_west_1.id
+  route {
+    cidr_block = "0.0.0.0/0" # open for all (public)
+    gateway_id = aws_internet_gateway.public_internet_gateway.id
+  }
+  tags = {
+    Name = "public-rt"
+  }
+}
+
+# Public Subnet Association
+resource "aws_route_table_association" "dev_proj_1_public_rt_subnet_association" {
+  count          = length(aws_subnet.public_subnets)
+  subnet_id      = aws_subnet.public_subnets[count.index].id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+# Private Route Table
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.jenkins_vpc_eu_west_1.id
+  #depends_on = [aws_nat_gateway.nat_gateway]
+  tags = {
+    Name = "private-rt"
+  }
+}
+
+# Private Subnet Association
+resource "aws_route_table_association" "private_rt_subnet_association" {
+  count          = length(aws_subnet.private_subnets)
+  subnet_id      = aws_subnet.private_subnets[count.index].id
+  route_table_id = aws_route_table.private_route_table.id
 }
