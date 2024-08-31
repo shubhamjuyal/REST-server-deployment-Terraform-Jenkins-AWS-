@@ -4,7 +4,19 @@ variable "cidr_public_subnet" {}
 variable "eu_availability_zone" {}
 variable "cidr_private_subnet" {}
 
-#setup vpc
+output "vpc_id" {
+  value = aws_vpc.jenkins_vpc_eu_west_1.id
+}
+
+output "public_subnets" {
+  value = aws_subnet.public_subnets.*.id
+}
+
+output "public_subnet_cidr_block" {
+  value = aws_subnet.public_subnets.*.cidr_block
+}
+
+# Setup VPC
 resource "aws_vpc" "jenkins_vpc_eu_west_1" {
   cidr_block = var.vpc_cidr
   tags = {
@@ -12,7 +24,7 @@ resource "aws_vpc" "jenkins_vpc_eu_west_1" {
   }
 }
 
-# Setup public subnet
+# Setup Public Subnet
 resource "aws_subnet" "public_subnets" {
   count             = length(var.cidr_public_subnet)
   vpc_id            = aws_vpc.jenkins_vpc_eu_west_1.id
@@ -24,7 +36,7 @@ resource "aws_subnet" "public_subnets" {
   }
 }
 
-# Setup private subnet
+# Setup Private Subnet
 resource "aws_subnet" "private_subnets" {
   count             = length(var.cidr_private_subnet)
   vpc_id            = aws_vpc.jenkins_vpc_eu_west_1.id
@@ -57,7 +69,7 @@ resource "aws_route_table" "public_route_table" {
 }
 
 # Public Subnet Association
-resource "aws_route_table_association" "dev_proj_1_public_rt_subnet_association" {
+resource "aws_route_table_association" "public_rt_subnet_association" {
   count          = length(aws_subnet.public_subnets)
   subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.public_route_table.id
