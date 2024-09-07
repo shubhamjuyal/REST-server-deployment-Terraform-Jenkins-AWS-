@@ -2,6 +2,13 @@ variable "ec2_sg_name" {}
 variable "vpc_id" {}
 variable "ec2_jenkins_sg_name" {}
 
+output "id_of_ec2_sg_ssh_http" {
+  value = aws_security_group.ec2_sg_ssh_http.id
+}
+
+output "id_of_ec2_jenkins_sg_port_8080" {
+  value = aws_security_group.ec2_jenkins_sg_port_8080.id
+}
 
 resource "aws_security_group" "ec2_sg_ssh_http" {
   name        = var.ec2_jenkins_sg_name
@@ -48,7 +55,7 @@ resource "aws_security_group" "ec2_sg_ssh_http" {
     Name = var.ec2_jenkins_sg_name
   }
 }
-resource "aws_security_group" "ec2_jenkins_port_8080" {
+resource "aws_security_group" "ec2_jenkins_sg_port_8080" {
   name        = var.ec2_jenkins_sg_name
   description = "Enable the Port 8080 for jenkins"
   vpc_id      = var.vpc_id
